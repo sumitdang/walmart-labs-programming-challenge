@@ -1,0 +1,241 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>walmart-labs-programming-challenge</groupId>
+  <artifactId>walmart-labs-programming-challenge</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>walmart-labs-programming-challenge</name>
+  <description>Demo project for Walmart Programming Challenge</description>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.0.2.RELEASE</version>
+		<relativePath/>
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<!-- Destination for JaCoCo report output -->
+		<jacoco.maven.plugin.version>0.8.0</jacoco.maven.plugin.version>
+		<jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
+		<jacoco.ut.execution.data.file>${project.build.directory}/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
+	</properties>
+
+	<dependencies>
+	
+		<!-- Platform Security Configs STARTS -->
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-access</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		<!-- Platform Security Configs ENDS -->
+		
+		<!-- SpringFramework STARTS -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.hateoas</groupId>
+			<artifactId>spring-hateoas</artifactId>
+			<version>0.24.0.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- SpringFramework ENDS -->
+
+		<!-- Database Dependencies STARTS -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>5.0.7</version>
+		</dependency>
+		<!-- Database Dependencies ENDS -->
+		
+		<!-- JWT Configs ENDS -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.7.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.json</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		<!-- JWT Configs ENDS -->
+		
+		<!-- Utility class Dependencies STARTS -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.7</version>
+		</dependency>
+		<!-- Utility class Dependencies ENDS -->
+		
+		<!-- Swagger Dependencies STARTS -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+		<!-- Swagger Dependencies ENDS -->
+
+		<!-- Junit Dependencies STARTS -->
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>1.7.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito2</artifactId>
+			<version>1.7.4</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Junit Dependencies ENDS -->
+        
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			
+			<!-- Surefire plugin - unit tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- Sets the VM argument line used when unit tests are run. -->
+					<argLine>${surefireArgLine}</argLine>
+					<skipTests>false</skipTests>
+					<!-- Excludes integration tests when unit tests are run. -->
+				</configuration>
+			</plugin>			
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.maven.plugin.version}</version>
+				<executions>
+					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
+						is passed as VM argument when Maven the Surefire plugin is executed. -->
+					<execution>
+						<id>pre-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<destFile>${jacoco.ut.execution.data.file}</destFile>
+							<!-- Sets the name of the property containing the settings for JaCoCo 
+								runtime agent. -->
+							<propertyName>surefireArgLine</propertyName>
+						</configuration>
+					</execution>
+					<!-- Ensures that the code coverage report for unit tests is created 
+						after unit tests have been run. -->
+					<execution>
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<dataFile>${jacoco.ut.execution.data.file}</dataFile>
+							<!-- Sets the output directory for the code coverage report. -->
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+	      <plugin>
+	        <groupId>io.fabric8</groupId>
+	        <artifactId>fabric8-maven-plugin</artifactId>
+	        <version>3.5.38</version>
+	        <executions>
+	          <execution>
+	            <id>fmp</id>
+	            <goals>
+	              <goal>resource</goal>
+	              <goal>helm</goal>
+	              <goal>build</goal>
+	            </goals>
+	          </execution>
+	        </executions>
+	      </plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>sonar</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+            <properties>
+                <sonar.host.url>http://sonarqube-integration.b9ad.pro-us-east-1.openshiftapps.com</sonar.host.url>
+                <sonar.login>ab061e73f3ed121bac130698fec666f4251a7536</sonar.login>
+                <sonar.language>java</sonar.language>
+                <sonar.jdbc.driver>org.postgresql.Driver</sonar.jdbc.driver>
+                <sonar.sources>src/main/java</sonar.sources>
+                <sonar.tests>src/test/java</sonar.tests>
+                <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+                <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+                <sonar.jacoco.reportPaths>${project.build.directory}/coverage-reports/jacoco-ut.exec</sonar.jacoco.reportPaths>
+            </properties>
+
+		</profile>
+</profiles>	
+</project>
