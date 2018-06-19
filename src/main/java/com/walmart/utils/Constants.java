@@ -18,7 +18,10 @@ public class Constants {
 	public static final String HYPHEN = "-";
 
 	// Error Message
-	public static final String ERROR_EMAIL_MISMATCHED = "ERROR - Hold and Confirm request customer email don't match";
+	public static final String ERROR_RESERVATION_NOT_FOUND = "NOT_FOUND - Your reservation is not found in our database.";
 	public static final String ERROR_RESERVATION_EXPIRED = "EXPIRED - Your reservation is timed-out, please book again.";
+	public static final String ERROR_EMAIL_MISMATCHED = "ERROR - Hold and Confirm request customer email don't match.";
 
+	// Reservation Constants
+	public static final String RESERVATION_LABEL ="RESERVATION# ";
 }

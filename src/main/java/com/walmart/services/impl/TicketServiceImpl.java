@@ -144,6 +144,8 @@ public class TicketServiceImpl implements TicketService {
 				if (consecutiveSeats.size() == numSeats) {
 					return consecutiveSeats;
 				}
+			} else {
+				consecutiveSeats.removeAll(consecutiveSeats);
 			}
 		}
 		if (bestSeats.size() < consecutiveSeats.size()) {
@@ -210,8 +212,10 @@ public class TicketServiceImpl implements TicketService {
 	@Transactional
 	public String reserveSeats(int seatHoldId, String customerEmail) {
 		Reservation reservation = reservationRepo.getReservationById(seatHoldId);
-		if (Constants.RESERVATION_EXPIRED.equals(reservation.getStatus())) {
-			return Constants.ERROR_EMAIL_MISMATCHED;
+		if (reservation == null) {
+			return Constants.ERROR_RESERVATION_NOT_FOUND;
+		} else if (Constants.RESERVATION_EXPIRED.equals(reservation.getStatus())) {
+			return Constants.ERROR_RESERVATION_EXPIRED;
 		} else if (!reservation.getCustomerEmail().equals(customerEmail)) {
 			return Constants.ERROR_EMAIL_MISMATCHED;
 		} else {
@@ -226,7 +230,7 @@ public class TicketServiceImpl implements TicketService {
 			}
 			blockedSeatRepo.saveAll(blockedSeats);
 
-			return String.valueOf(seatHoldId);
+			return Constants.RESERVATION_LABEL + String.valueOf(seatHoldId);
 		}
 	}
 }

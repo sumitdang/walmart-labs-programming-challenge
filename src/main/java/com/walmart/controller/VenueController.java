@@ -107,10 +107,11 @@ public class VenueController {
 			@RequestParam(value = "customerEmail", required = true) String customerEmail) throws Exception {
 		log.info("POST /venue/seats/book/{}/?customerEmail=", seatHoldId, customerEmail);
 		String response = ticketService.reserveSeats(seatHoldId, customerEmail);
-		if (Constants.ERROR_EMAIL_MISMATCHED.equals(response)) {
-			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
-		} else if (Constants.ERROR_RESERVATION_EXPIRED.equals(response)) {
+		if (Constants.ERROR_RESERVATION_NOT_FOUND.equals(response)
+				|| Constants.ERROR_RESERVATION_EXPIRED.equals(response)) {
 			return new ResponseEntity<String>(response, HttpStatus.NOT_FOUND);
+		} else if (Constants.ERROR_EMAIL_MISMATCHED.equals(response)) {
+			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
 		} else {
 			return new ResponseEntity<String>(response, HttpStatus.OK);
 		}
