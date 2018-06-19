@@ -1,5 +1,6 @@
 package com.walmart.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -16,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.walmart.pojo.db.Venue;
+import com.walmart.pojo.ui.Row;
 import com.walmart.pojo.ui.SeatHold;
 import com.walmart.repository.VenueRepository;
 import com.walmart.services.SeatService;
 import com.walmart.services.TicketService;
+import com.walmart.utils.Constants;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,7 +45,7 @@ import io.swagger.annotations.ApiParam;
  */
 @RestController
 @RequestMapping(value = "/walmart/v1", produces = MediaType.APPLICATION_JSON_VALUE)
-@Api(tags = "Events", description = "Endpoint pertaining to /Events")
+@Api(tags = "Events", description = "Endpoint pertaining to /venue")
 public class VenueController {
 
 	private static final Logger log = LoggerFactory.getLogger(VenueController.class);
@@ -84,7 +87,11 @@ public class VenueController {
 		log.info("POST /venue/seats/hold/{}/?customerEmail=", numSeats, customerEmail);
 		SeatHold seatHold = ticketService.findAndHoldSeats(numSeats, customerEmail);
 
-		return new ResponseEntity<SeatHold>(seatHold, HttpStatus.OK);
+		if (HttpStatus.NO_CONTENT.equals(seatHold.getStatus())) {
+			return new ResponseEntity<SeatHold>(HttpStatus.NO_CONTENT);
+		} else {
+			return new ResponseEntity<SeatHold>(seatHold, HttpStatus.OK);
+		}
 	}
 
 	/**
@@ -99,9 +106,14 @@ public class VenueController {
 			@ApiParam(value = "seatHoldId", required = true) @PathVariable Integer seatHoldId,
 			@RequestParam(value = "customerEmail", required = true) String customerEmail) throws Exception {
 		log.info("POST /venue/seats/book/{}/?customerEmail=", seatHoldId, customerEmail);
-		String reservationId = ticketService.reserveSeats(seatHoldId, customerEmail);
-
-		return new ResponseEntity<String>(reservationId, HttpStatus.OK);
+		String response = ticketService.reserveSeats(seatHoldId, customerEmail);
+		if (Constants.ERROR_EMAIL_MISMATCHED.equals(response)) {
+			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+		} else if (Constants.ERROR_RESERVATION_EXPIRED.equals(response)) {
+			return new ResponseEntity<String>(response, HttpStatus.NOT_FOUND);
+		} else {
+			return new ResponseEntity<String>(response, HttpStatus.OK);
+		}
 	}
 
 	/**
@@ -119,17 +131,36 @@ public class VenueController {
 	}
 
 	/**
+	 * This method is used to get seat status.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@GetMapping(value = "/venue/seats/")
+	@ApiOperation(value = "Get seat map")
+	public ResponseEntity<List<Row>> getSeats() throws Exception {
+		log.info("GET /venue/seats/status/");
+		List<Row> seatMap = seatService.getSeats();
+
+		return new ResponseEntity<List<Row>>(seatMap, HttpStatus.OK);
+	}
+
+	/**
 	 * This method is used to get seat map.
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	@GetMapping(value = "/venue/seats/map/")
+	@GetMapping(value = "/venue/seats/view/")
 	@ApiOperation(value = "Get seat map")
-	public ResponseEntity<List<String>> getSeatMap() throws Exception {
+	public ResponseEntity<List<String>> getSeatView() throws Exception {
 		log.info("GET /venue/seats/map/");
-		List<String> seatMap = seatService.getSeatMap();
+		List<String> seatsView = new ArrayList<String>();
 
-		return new ResponseEntity<List<String>>(seatMap, HttpStatus.OK);
+		List<Row> seatMap = seatService.getSeats();
+		for (Row row : seatMap) {
+			seatsView.add(row.getView());
+		}
+		return new ResponseEntity<List<String>>(seatsView, HttpStatus.OK);
 	}
 }

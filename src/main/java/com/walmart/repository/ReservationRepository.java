@@ -13,7 +13,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 	@Query(value = "select sum(r.num_seats) from public.reservation r where r.status IN ('HOLD', 'CONFIRMED')", nativeQuery = true)
 	public Integer getSeatCountForActiveReservations();
 
-	@Query(value = "select r.* from public.reservation r where r.status = 'HOLD'", nativeQuery = true)
+	@Query(value = "select r.* from public.reservation r where r.status = 'HOLD' and r.created_date < NOW() - INTERVAL '2 minutes'; ", nativeQuery = true)
 	public List<Reservation> getHoldStatusReservations();
 	
 	@Query(value = "select r.* from public.reservation r where r.reservation_id = :reservationId", nativeQuery = true)

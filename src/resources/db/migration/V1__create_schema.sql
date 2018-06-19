@@ -1,11 +1,10 @@
 CREATE TABLE venue (venue_id serial PRIMARY KEY, name VARCHAR(50), rows Integer, columns Integer, seating_direction VARCHAR(10) DEFAULT 'LEFT', seating_strategy VARCHAR(10) DEFAULT 'LINE');
-INSERT INTO venue (name, rows, columns) values ('Walmart Theatre', 10,10);
+INSERT INTO venue (name, rows, columns) values ('Walmart Theatre', 5, 5);
 
 CREATE TABLE reservation (reservation_id serial PRIMARY KEY, num_seats Integer, customer_email VARCHAR(50), status VARCHAR(10), 
 created_date TIMESTAMP WITH TIME ZONE NOT NULL, updated_date TIMESTAMP WITH TIME ZONE);
 
-CREATE TABLE blocked_seat (seat_id serial PRIMARY KEY, row_num Integer, column_num Integer, reservation_id INTEGER REFERENCES reservation(reservation_id));
-
+CREATE TABLE blocked_seat (seat_id VARCHAR(10) PRIMARY KEY, row_num Integer, column_num Integer, reservation_id INTEGER REFERENCES reservation(reservation_id), status VARCHAR(10));
 
 COMMENT ON TABLE venue IS 'This table contains attributes for a venue';
 COMMENT ON column venue.venue_id IS 'Primary Key for venue table';
@@ -28,3 +27,4 @@ COMMENT ON column blocked_seat.seat_id IS 'Primary Key for blockedSeat table';
 COMMENT ON column blocked_seat.row_num IS 'Seat row number';
 COMMENT ON column blocked_seat.column_num IS 'Seat column number';
 COMMENT ON column blocked_seat.reservation_id IS 'Foreign Key referencing reservation table, to map seat to reservation';
+COMMENT ON column blocked_seat.status IS 'Status of blocked seat : HOLD/BOOKED';

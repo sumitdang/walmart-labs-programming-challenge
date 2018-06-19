@@ -16,7 +16,21 @@ import com.walmart.pojo.db.BlockedSeat;
 import com.walmart.pojo.db.Reservation;
 import com.walmart.repository.BlockedSeatRepository;
 import com.walmart.repository.ReservationRepository;
+import com.walmart.utils.Constants;
 
+/**
+ * This service class needs to run in Transaction mode (either update all tables
+ * or none) as it is changing state for reservations from HOLD to EXPIRED, and
+ * also deleting seats associated with those reservations from blocked-seats
+ * table.
+ * 
+ * If we need to track blocked seats for reporting purpose we can create a
+ * isBlocked flag to soft delete seats. For the sake of simplicity, I am hard
+ * deleting these seats for now.
+ * 
+ * @author sumitdang
+ *
+ */
 @Service
 @Transactional
 public class SchedulerService {
@@ -30,20 +44,30 @@ public class SchedulerService {
 	private BlockedSeatRepository blockedSeatRepo;
 
 	// Scheduled for every minute
-	@Scheduled(cron = "0 * * ? * *", zone = "America/New_York")
+	@Scheduled(cron = "0 */2 * ? * *", zone = "America/New_York")
 	public void cleanupReservations() {
 		log.info("scheduler started");
-		List<Integer> reservationIds = new ArrayList<Integer>();
 		List<Reservation> holdReservations = reservationRepo.getHoldStatusReservations();
-		for (Reservation reservation : holdReservations) {
-			reservation.setStatus("EXPIRED");
-			reservation.setUpdatedDate(LocalDateTime.now());
-			reservationIds.add(reservation.getReservationId());
-		}
-		reservationRepo.saveAll(holdReservations);
+		Integer reservationsToExpire = (holdReservations != null && !holdReservations.isEmpty())
+				? holdReservations.size()
+				: 0;
 
-		List<BlockedSeat> blockedSeats = blockedSeatRepo.getBlockedSeatsByReservationIds(reservationIds);
-		blockedSeatRepo.deleteAll(blockedSeats);
+		// There should be no in-memory variables or database calls if there are zero
+		// reservations on HOLD.
+		if (reservationsToExpire > 0) {
+			List<Integer> reservationIds = new ArrayList<Integer>();
+			for (Reservation reservation : holdReservations) {
+				reservation.setStatus(Constants.RESERVATION_EXPIRED);
+				reservation.setUpdatedDate(LocalDateTime.now());
+				reservationIds.add(reservation.getReservationId());
+			}
+			reservationRepo.saveAll(holdReservations);
+			if (reservationIds != null && !reservationIds.isEmpty()) {
+				List<BlockedSeat> blockedSeats = blockedSeatRepo.getBlockedSeatsByReservationIds(reservationIds);
+				blockedSeatRepo.deleteAll(blockedSeats);
+			}
+		}
+		log.info("{} reservations are set to EXPIRED state ! ", reservationsToExpire);
 		log.info("scheduler ended");
 	}
 

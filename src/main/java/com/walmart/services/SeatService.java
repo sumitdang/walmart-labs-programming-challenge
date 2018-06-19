@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.walmart.pojo.ui.Row;
+
 @Service
 public interface SeatService {
 	/**
@@ -11,6 +13,6 @@ public interface SeatService {
 	 *
 	 * @return List<Seat>
 	 */
-	List<String> getSeatMap();
+	public List<Row> getSeats();
 
 }

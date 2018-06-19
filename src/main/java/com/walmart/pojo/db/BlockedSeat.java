@@ -4,11 +4,10 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
@@ -20,8 +19,8 @@ public class BlockedSeat implements Serializable {
 
 	@Id
 	@Column(name = "seat_id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer seatId;
+	@JsonIgnore
+	private String seatId;
 
 	@Column(name = "row_num")
 	private Integer rowNum;
@@ -30,13 +29,17 @@ public class BlockedSeat implements Serializable {
 	private Integer columnNum;
 
 	@Column(name = "reservation_id")
+	@JsonIgnore
 	private Integer reservationId;
 
-	public Integer getSeatId() {
+	@Column(name = "status")
+	private String status;
+
+	public String getSeatId() {
 		return seatId;
 	}
 
-	public void setSeatId(Integer seatId) {
+	public void setSeatId(String seatId) {
 		this.seatId = seatId;
 	}
 
@@ -62,6 +65,14 @@ public class BlockedSeat implements Serializable {
 
 	public void setReservationId(Integer reservationId) {
 		this.reservationId = reservationId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	@Override
