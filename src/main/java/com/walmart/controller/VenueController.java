@@ -45,7 +45,7 @@ import io.swagger.annotations.ApiParam;
  */
 @RestController
 @RequestMapping(value = "/walmart/v1", produces = MediaType.APPLICATION_JSON_VALUE)
-@Api(tags = "Events", description = "Endpoint pertaining to /venue")
+@Api(tags = "VenueController", description = "Endpoint pertaining to /venue")
 public class VenueController {
 
 	private static final Logger log = LoggerFactory.getLogger(VenueController.class);
@@ -132,7 +132,7 @@ public class VenueController {
 	}
 
 	/**
-	 * This method is used to get seat status.
+	 * This method is used to get status for all seats.
 	 * 
 	 * @return
 	 * @throws Exception
@@ -147,7 +147,7 @@ public class VenueController {
 	}
 
 	/**
-	 * This method is used to get seat map.
+	 * This method is used to get view for all seats.
 	 * 
 	 * @return
 	 * @throws Exception

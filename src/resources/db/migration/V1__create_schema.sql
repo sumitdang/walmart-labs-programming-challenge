@@ -1,5 +1,5 @@
-CREATE TABLE venue (venue_id serial PRIMARY KEY, name VARCHAR(50), rows Integer, columns Integer, seating_direction VARCHAR(10) DEFAULT 'LEFT', seating_strategy VARCHAR(10) DEFAULT 'LINE');
-INSERT INTO venue (name, rows, columns) values ('Walmart Theatre', 5, 5);
+CREATE TABLE venue (venue_id serial PRIMARY KEY, name VARCHAR(50), rows Integer, columns Integer, seating_start VARCHAR(10) DEFAULT 'FRONT',  seating_direction VARCHAR(10) DEFAULT 'LEFT', seating_strategy VARCHAR(10) DEFAULT 'LINE');
+INSERT INTO venue (name, rows, columns) values ('Walmart Theatre', 10, 10);
 
 CREATE TABLE reservation (reservation_id serial PRIMARY KEY, num_seats Integer, customer_email VARCHAR(50), status VARCHAR(10), 
 created_date TIMESTAMP WITH TIME ZONE NOT NULL, updated_date TIMESTAMP WITH TIME ZONE);

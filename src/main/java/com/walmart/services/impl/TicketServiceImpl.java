@@ -26,6 +26,12 @@ import com.walmart.services.SeatService;
 import com.walmart.services.TicketService;
 import com.walmart.utils.Constants;
 
+/**
+ * Implementation class for Ticket Service
+ * 
+ * @author sumitdang
+ *
+ */
 @Service
 public class TicketServiceImpl implements TicketService {
 

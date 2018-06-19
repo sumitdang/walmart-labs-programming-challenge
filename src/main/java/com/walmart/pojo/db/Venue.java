@@ -33,6 +33,9 @@ public class Venue implements Serializable {
 	@Column(name = "columns")
 	private Integer columns;
 
+	@Column(name = "seating_start")
+	private String seatingStart;
+
 	@Column(name = "seating_direction")
 	private String seatingDirection;
 
@@ -68,6 +71,14 @@ public class Venue implements Serializable {
 
 	public Integer getColumns() {
 		return columns;
+	}
+
+	public String getSeatingStart() {
+		return seatingStart;
+	}
+
+	public void setSeatingStart(String seatingStart) {
+		this.seatingStart = seatingStart;
 	}
 
 	public void setColumns(Integer columns) {
