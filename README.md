@@ -1,4 +1,4 @@
-Timestamp 06/21/2018 00:05: This is the final commit to this project and represents my final version for my submission.
+Timestamp 06/22/2018 19:00: This is the final commit to this project and represents my final version for my submission.
 
 # walmart-labs-programming-challenge
 
@@ -112,7 +112,7 @@ System relies on 3 tables:
 
 ### Future scalability options
 1. Project is scalable to hold multiple venues. We can configure our endpoints to /venues/{venueId}/ in future.
-2. We can add more seat selection algorithm like BACK_LEFT_BLOCK, LEFT_CENTER_LINE, as of now we have FRONT_LEFT_LINE pattern i.e., start seating from (front row - left to right - line seating arrangement).
+2. We can add more seat selection algorithm like BACK\_LEFT\_BLOCK, LEFT\_CENTER\_LINE, as of now we have FRONT\_LEFT\_LINE pattern i.e., start seating from (front row - left to right - line seating arrangement).
 3. Support Venue seating patterns outside N X M.
 4. Add Reporting APIs to fetch Daily, Monthly and Annual booking percentage and pattern reports.
 5. Add Billing component to reserveSeats functionality.
