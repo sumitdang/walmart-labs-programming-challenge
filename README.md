@@ -53,7 +53,7 @@ https://github.com/sumitdang/walmart-labs-programming-challenge.git
 cd walmart-labs-programming-challenge
 ```
 
-#### Building
+#### Build
 
 Open STS, click File Menu -> Import... -> Maven -> Existing Maven project.
 Select path of project checkout folder.
@@ -65,6 +65,15 @@ This should download all required maven dependencies.
 Once all errors are resolved, right click on Project folder -> Rus As -> Spring Boot App
 
 Check if app is up and running by hitting following url on browser : http://localhost:8080/swagger-ui.html
+
+#### Junit Test Runs
+
+As there is no sonar url to publish report, you can run Junit test cases using STS IDE or using following command from project directory using command prompt:
+Test results logs, Test coverage and Junit reports are committed to Git Repo.
+
+```
+mvn clean compile install
+```
 
 #### Swagger URL
 Once the application is up and running, you should be able to access API using swagger link : http://localhost:8080/swagger-ui.html
