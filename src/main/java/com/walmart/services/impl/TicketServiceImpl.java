@@ -83,125 +83,18 @@ public class TicketServiceImpl implements TicketService {
 			seatHold.setStatus(HttpStatus.NO_CONTENT);
 		} else {
 			Venue venue = venueRepo.getVenueById(1);
-			String seatingStart = "FRONT";
-			String seatingDirection = venue.getSeatingDirection();
-			String seatingStrategy = venue.getSeatingStrategy();
-
-			String algorithm = new StringBuilder().append(seatingStart).append("_").append(seatingDirection).append("_")
-					.append(seatingStrategy).toString();
-			log.info("Seating Algorithm : {}", algorithm);
+//			String seatingStart = "FRONT";
+//			String seatingDirection = venue.getSeatingDirection();
+//			String seatingStrategy = venue.getSeatingStrategy();
+//
+//			String algorithm = new StringBuilder().append(seatingStart).append("_").append(seatingDirection).append("_")
+//					.append(seatingStrategy).toString();
+//			log.info("Seating Algorithm : {}", algorithm);
 			List<Row> seats = seatService.getSeats();
 
-			List<Seat> bestSeats = getBestSeatsRecursive(seats, numSeats, new ArrayList<Seat>());
-			seatHold = holdSeats(bestSeats, customerEmail);
-			log.info("seatHold.getSeatHoldId() : {}", seatHold.getSeatHoldId());
+			List<Seat> bestSeats = seatService.getBestSeatsRecursive(seats, numSeats, new ArrayList<Seat>());
+			seatHold = seatService.holdSeats(bestSeats, customerEmail);
 		}
-		return seatHold;
-	}
-
-	/**
-	 * Recursive Method to look up best seats
-	 * 
-	 * @param seats
-	 * @param numSeats
-	 * @param temporaryHeldSeats
-	 * @return
-	 */
-	public List<Seat> getBestSeatsRecursive(List<Row> seats, Integer numSeats, List<Seat> temporaryHeldSeats) {
-		for (Row row : seats) {
-			if (row.getAvailableSeats() >= numSeats) {
-				List<Seat> bestSeats = getBestSeats(row, numSeats, temporaryHeldSeats);
-				if (bestSeats.size() == numSeats) {
-					temporaryHeldSeats.addAll(getBestSeats(row, numSeats, temporaryHeldSeats));
-					return temporaryHeldSeats;
-				}
-			}
-		}
-
-		// Recursive call with half length if required number of seats are not
-		// available in same row.
-		getBestSeatsRecursive(seats, numSeats - (numSeats / 2), temporaryHeldSeats);
-		getBestSeatsRecursive(seats, numSeats / 2, temporaryHeldSeats);
-
-		return temporaryHeldSeats;
-	}
-
-	/**
-	 * Helper Method to look for consecutive seats in a row.
-	 * 
-	 * @param row
-	 * @param numSeats
-	 * @return
-	 */
-	public List<Seat> getBestSeats(Row row, Integer numSeats, List<Seat> temporaryHeldSeats) {
-		String rowView = row.getView();
-		String[] rowSeats = StringUtils.normalizeSpace(rowView).split(StringUtils.SPACE);
-
-		List<Seat> consecutiveSeats = new ArrayList<Seat>();
-		List<Seat> bestSeats = new ArrayList<Seat>();
-
-		Integer column = 0;
-		for (String status : rowSeats) {
-			++column;
-			Seat currentSeat = new Seat(row.getRowNumber(), column);
-			if (Constants.SEAT_OPEN.equalsIgnoreCase(status) && (temporaryHeldSeats == null
-					|| (temporaryHeldSeats != null && !temporaryHeldSeats.contains(currentSeat)))) {
-				consecutiveSeats.add(currentSeat);
-				if (consecutiveSeats.size() == numSeats) {
-					return consecutiveSeats;
-				}
-			} else {
-				consecutiveSeats.removeAll(consecutiveSeats);
-			}
-		}
-		if (bestSeats.size() < consecutiveSeats.size()) {
-			bestSeats = consecutiveSeats;
-
-		}
-		return bestSeats;
-	}
-
-	/**
-	 * Method to hold seats for a specific customer
-	 * 
-	 * @param seats
-	 * @param customerEmail
-	 * @return
-	 */
-	@Transactional
-	SeatHold holdSeats(List<Seat> seats, String customerEmail) {
-		SeatHold seatHold = new SeatHold();
-		try {
-			Reservation reservation = new Reservation();
-			reservation.setCustomerEmail(customerEmail);
-			reservation.setNumSeats(seats.size());
-			reservation.setStatus(Constants.RESERVATION_HOLD);
-			reservation.setCreatedDate(LocalDateTime.now());
-			Reservation savedReservation = reservationRepo.saveAndFlush(reservation);
-
-			List<BlockedSeat> blockedSeats = new ArrayList<BlockedSeat>();
-			for (Seat seat : seats) {
-				BlockedSeat blockedSeat = new BlockedSeat();
-				String seatId = new StringBuilder().append(String.valueOf(seat.getRow())).append(Constants.HYPHEN)
-						.append(seat.getColumn()).toString();
-				blockedSeat.setSeatId(seatId);
-				blockedSeat.setRowNum(seat.getRow());
-				blockedSeat.setColumnNum(seat.getColumn());
-				blockedSeat.setStatus(Constants.SEAT_HOLD);
-				blockedSeat.setReservationId(savedReservation.getReservationId());
-				blockedSeats.add(blockedSeat);
-			}
-
-			blockedSeatRepo.saveAll(blockedSeats);
-
-			seatHold.setSeatHoldId(savedReservation.getReservationId());
-			seatHold.setBlockedSeats(blockedSeats);
-			seatHold.setStatus(HttpStatus.CREATED);
-		} catch (Exception ex) {
-			log.error("Seat Hold Exception : {}", ex.getMessage());
-			seatHold.setStatus(HttpStatus.NO_CONTENT);
-		}
-
 		return seatHold;
 	}
 
@@ -222,7 +115,7 @@ public class TicketServiceImpl implements TicketService {
 			return Constants.ERROR_RESERVATION_NOT_FOUND;
 		} else if (Constants.RESERVATION_EXPIRED.equals(reservation.getStatus())) {
 			return Constants.ERROR_RESERVATION_EXPIRED;
-		} else if (!reservation.getCustomerEmail().equals(customerEmail)) {
+		} else if (StringUtils.isNotBlank(customerEmail) && !customerEmail.equals(reservation.getCustomerEmail())) {
 			return Constants.ERROR_EMAIL_MISMATCHED;
 		} else {
 			reservation.setStatus(Constants.RESERVATION_CONFIRMED);

@@ -14,7 +14,7 @@ COMMENT ON column venue.columns IS 'Total Columns in this venue';
 COMMENT ON column venue.seating_direction IS 'Admin attribute to decide seating direction for this venue, possible values - Left, Right, Center';
 COMMENT ON column venue.seating_strategy IS 'Admin attribute to decide seating strategy for this venue, possible values - Line, Block';
 
-COMMENT ON TABLE reservation IS 'This table will hold all details for an reservation';
+COMMENT ON TABLE reservation IS 'This table will hold all details for a reservation';
 COMMENT ON column reservation.reservation_id IS 'Primary Key for reservation table';
 COMMENT ON column reservation.num_seats IS 'Number of seats held/booked in this reservation';
 COMMENT ON column reservation.customer_email IS 'User email used to hold/book this reservation';

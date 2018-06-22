@@ -11,7 +11,7 @@ import com.walmart.pojo.db.Venue;
 public interface VenueRepository extends JpaRepository<Venue, Integer> {
 
 	@Query(value = "select v.* from public.venue v", nativeQuery = true)
-	public List<Venue> getAllVenues();
+	public List<Venue> getVenueDetails();
 
 	@Query(value = "select v.* from public.venue v where v.venue_id = :venueId", nativeQuery = true)
 	public Venue getVenueById(@Param("venueId") Integer venueId);

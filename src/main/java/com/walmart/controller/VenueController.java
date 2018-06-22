@@ -67,7 +67,7 @@ public class VenueController {
 	 */
 	@GetMapping(value = "/venue/seats/availablecount/")
 	@ApiOperation(value = "Get available seat count")
-	public ResponseEntity<Integer> getAllSeatDetailsByEventId() throws Exception {
+	public ResponseEntity<Integer> getSeatAvailableCount() throws Exception {
 		log.info("GET /venue/seats/availablecount/");
 		Integer count = ticketService.numSeatsAvailable();
 		return new ResponseEntity<Integer>(count, HttpStatus.OK);
@@ -80,7 +80,7 @@ public class VenueController {
 	 * @throws Exception
 	 */
 	@PostMapping(value = "/venue/seats/hold/{numSeats}/")
-	@ApiOperation(value = "Hold seats")
+	@ApiOperation(value = "Hold given number of seats")
 	public ResponseEntity<SeatHold> holdSeats(
 			@ApiParam(value = "numSeats", required = true) @PathVariable Integer numSeats,
 			@RequestParam(value = "customerEmail", required = true) String customerEmail) throws Exception {
@@ -100,9 +100,9 @@ public class VenueController {
 	 * @return
 	 * @throws Exception
 	 */
-	@PostMapping(value = "/venue/seats/book/{seatHoldId}/")
-	@ApiOperation(value = "Book seats")
-	public ResponseEntity<String> bookSeats(
+	@PostMapping(value = "/venue/seats/reserve/{seatHoldId}/")
+	@ApiOperation(value = "Reserve seats using seatHoldId")
+	public ResponseEntity<String> reserveSeats(
 			@ApiParam(value = "seatHoldId", required = true) @PathVariable Integer seatHoldId,
 			@RequestParam(value = "customerEmail", required = true) String customerEmail) throws Exception {
 		log.info("POST /venue/seats/book/{}/?customerEmail=", seatHoldId, customerEmail);
@@ -125,25 +125,10 @@ public class VenueController {
 	 */
 	@GetMapping(value = "/venue/")
 	@ApiOperation(value = "Get venue details")
-	public ResponseEntity<List<Venue>> getAllVenues() throws Exception {
+	public ResponseEntity<List<Venue>> getVenueDetails() throws Exception {
 		log.info("GET /venue/");
-		List<Venue> venues = venueRepo.getAllVenues();
+		List<Venue> venues = venueRepo.getVenueDetails();
 		return new ResponseEntity<List<Venue>>(venues, HttpStatus.OK);
-	}
-
-	/**
-	 * This method is used to get status for all seats.
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	@GetMapping(value = "/venue/seats/")
-	@ApiOperation(value = "Get seat map")
-	public ResponseEntity<List<Row>> getSeats() throws Exception {
-		log.info("GET /venue/seats/status/");
-		List<Row> seatMap = seatService.getSeats();
-
-		return new ResponseEntity<List<Row>>(seatMap, HttpStatus.OK);
 	}
 
 	/**
