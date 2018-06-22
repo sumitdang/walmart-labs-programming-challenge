@@ -43,8 +43,8 @@ Based on the assumptions above I came up with a **Greedy seat selection algorith
 
 #### Installation
 
-
 Go to postgres database and create a new database walmart_db with default user (postgres).
+Code has a flyway initializer script and all other required tables will be automatically created once you run as Spring Boot App.
 
 Checkout codebase from master branch from github using following commands in github:
 
